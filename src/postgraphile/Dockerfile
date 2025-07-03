@@ -1,0 +1,30 @@
+
+FROM node:20-alpine
+
+ARG NETWORK
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+
+ENV NETWORK=${NETWORK}
+ENV POSTGRES_HOST=${POSTGRES_HOST}
+ENV POSTGRES_DB=${POSTGRES_DB}
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+WORKDIR /app
+
+npx postgraphile \
+  -c "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}" \
+  --schema ${NETWORK} \
+  --watch \
+  --enhance-graphiql \
+  --dynamic-json
+
+EXPOSE 5678
+
+### Debugging only
+# ENTRYPOINT ["tail"]
+# CMD ["-f","/dev/null"]
+
